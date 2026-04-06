@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://magmanet.my
+
+# Sitemaps
+Sitemap: https://magmanet.my/sitemap.xml

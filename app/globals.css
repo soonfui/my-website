@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tailwind v4：須明確掃描 App Router 原始碼，否則生產 CSS 會缺少多數 utility（按鈕底色、陰影、圓角等） */
+@source "./**/*.{js,ts,jsx,tsx,mdx}";
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -19,10 +22,20 @@
   }
 }
 
-body {
+@media (max-width: 640px) {
+  .gradient-blob {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+} */
+body {
+  background-color: #F5F5F7;
 }
 
 .fade-in {
@@ -40,19 +53,41 @@ body {
   }
 }
 
+/* 不依賴 JS：先前 opacity:0 + .show 在客戶端腳本失敗時會讓整區塊（按鈕、卡片）完全看不見 */
 .fade-up {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s ease;
-}
-
-.fade-up.show {
   opacity: 1;
   transform: translateY(0);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .fade-up {
+    animation: fade-up-enter 0.7s ease-out both;
+  }
+}
+
+@keyframes fade-up-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+/* 橫向捲動區隱藏捲軸（仍可用滑鼠/觸控捲動與箭頭按鈕） */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .gradient-bg {
@@ -62,37 +97,31 @@ html {
   overflow: hidden;
 }
 
-@media (max-width: 640px) {
-  .gradient-blob {
-    width: 300px;
-    height: 300px;
-  }
-}
-
 .gradient-blob {
   position: absolute;
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   filter: blur(120px);
-  opacity: 0.4;
-  animation: float 20s infinite ease-in-out;
+  opacity: 0.25; /* ⚠️ 很重要：變淡 */
+  animation: float 25s infinite ease-in-out;
 }
 
+/* 👇 全部改成超淡顏色（接近白） */
 .gradient-blob:nth-child(1) {
-  background: #22c55e;
+  background: #ffffff;
   top: -100px;
   left: -100px;
 }
 
 .gradient-blob:nth-child(2) {
-  background: #3b82f6;
-  bottom: -120px;
+  background: #e5e7eb; /* 淺灰 */
+  bottom: -100px;
   right: -100px;
   animation-delay: 5s;
 }
 
 .gradient-blob:nth-child(3) {
-  background: #a855f7;
+  background: #f0f0f0;
   top: 40%;
   left: 60%;
   animation-delay: 10s;
@@ -103,9 +132,20 @@ html {
     transform: translate(0, 0);
   }
   50% {
-    transform: translate(50px, -50px);
+    transform: translate(40px, -40px);
   }
   100% {
     transform: translate(0, 0);
   }
+}
+
+/* Chrome, Safari */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

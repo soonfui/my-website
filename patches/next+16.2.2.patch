@@ -1,0 +1,105 @@
+diff --git a/node_modules/next/dist/client/asset-prefix.js b/node_modules/next/dist/client/asset-prefix.js
+index 801bdc6..b66f0b9 100644
+--- a/node_modules/next/dist/client/asset-prefix.js
++++ b/node_modules/next/dist/client/asset-prefix.js
+@@ -9,8 +9,30 @@ Object.defineProperty(exports, "getAssetPrefix", {
+     }
+ });
+ const _invarianterror = require("../shared/lib/invariant-error");
++function getAssetPrefixFromPathname(pathname, srcLabel) {
++    const nextIndex = pathname.indexOf('/_next/');
++    if (nextIndex === -1) {
++        throw Object.defineProperty(new _invarianterror.InvariantError(`Expected ${srcLabel} to contain '/_next/'. Received ${pathname} instead.`), "__NEXT_ERROR_CODE", {
++            value: "E784",
++            enumerable: false,
++            configurable: true
++        });
++    }
++    return pathname.slice(0, nextIndex);
++}
+ function getAssetPrefix() {
+-    const currentScript = document.currentScript;
++    const stylesheet = document.querySelector('link[rel="stylesheet"][href*="/_next/"]');
++    if (stylesheet instanceof HTMLLinkElement && stylesheet.href) {
++        const { pathname } = new URL(stylesheet.href);
++        return getAssetPrefixFromPathname(pathname, "stylesheet href pathname");
++    }
++    let currentScript = document.currentScript;
++    if (!(currentScript instanceof HTMLScriptElement)) {
++        const scripts = document.querySelectorAll('script[src*="/_next/"]');
++        if (scripts.length > 0) {
++            currentScript = scripts[scripts.length - 1];
++        }
++    }
+     if (!(currentScript instanceof HTMLScriptElement)) {
+         throw Object.defineProperty(new _invarianterror.InvariantError(`Expected document.currentScript to be a <script> element. Received ${currentScript} instead.`), "__NEXT_ERROR_CODE", {
+             value: "E783",
+@@ -19,15 +41,7 @@ function getAssetPrefix() {
+         });
+     }
+     const { pathname } = new URL(currentScript.src);
+-    const nextIndex = pathname.indexOf('/_next/');
+-    if (nextIndex === -1) {
+-        throw Object.defineProperty(new _invarianterror.InvariantError(`Expected document.currentScript src to contain '/_next/'. Received ${currentScript.src} instead.`), "__NEXT_ERROR_CODE", {
+-            value: "E784",
+-            enumerable: false,
+-            configurable: true
+-        });
+-    }
+-    return pathname.slice(0, nextIndex);
++    return getAssetPrefixFromPathname(pathname, "document.currentScript src");
+ }
+ 
+ if ((typeof exports.default === 'function' || (typeof exports.default === 'object' && exports.default !== null)) && typeof exports.default.__esModule === 'undefined') {
+diff --git a/node_modules/next/dist/esm/client/asset-prefix.js b/node_modules/next/dist/esm/client/asset-prefix.js
+index 773eaaa..9fe37d5 100644
+--- a/node_modules/next/dist/esm/client/asset-prefix.js
++++ b/node_modules/next/dist/esm/client/asset-prefix.js
+@@ -1,6 +1,28 @@
+ import { InvariantError } from '../shared/lib/invariant-error';
++function getAssetPrefixFromPathname(pathname, srcLabel) {
++    const nextIndex = pathname.indexOf('/_next/');
++    if (nextIndex === -1) {
++        throw Object.defineProperty(new InvariantError(`Expected ${srcLabel} to contain '/_next/'. Received ${pathname} instead.`), "__NEXT_ERROR_CODE", {
++            value: "E784",
++            enumerable: false,
++            configurable: true
++        });
++    }
++    return pathname.slice(0, nextIndex);
++}
+ export function getAssetPrefix() {
+-    const currentScript = document.currentScript;
++    const stylesheet = document.querySelector('link[rel="stylesheet"][href*="/_next/"]');
++    if (stylesheet instanceof HTMLLinkElement && stylesheet.href) {
++        const { pathname } = new URL(stylesheet.href);
++        return getAssetPrefixFromPathname(pathname, "stylesheet href pathname");
++    }
++    let currentScript = document.currentScript;
++    if (!(currentScript instanceof HTMLScriptElement)) {
++        const scripts = document.querySelectorAll('script[src*="/_next/"]');
++        if (scripts.length > 0) {
++            currentScript = scripts[scripts.length - 1];
++        }
++    }
+     if (!(currentScript instanceof HTMLScriptElement)) {
+         throw Object.defineProperty(new InvariantError(`Expected document.currentScript to be a <script> element. Received ${currentScript} instead.`), "__NEXT_ERROR_CODE", {
+             value: "E783",
+@@ -9,15 +31,7 @@ export function getAssetPrefix() {
+         });
+     }
+     const { pathname } = new URL(currentScript.src);
+-    const nextIndex = pathname.indexOf('/_next/');
+-    if (nextIndex === -1) {
+-        throw Object.defineProperty(new InvariantError(`Expected document.currentScript src to contain '/_next/'. Received ${currentScript.src} instead.`), "__NEXT_ERROR_CODE", {
+-            value: "E784",
+-            enumerable: false,
+-            configurable: true
+-        });
+-    }
+-    return pathname.slice(0, nextIndex);
++    return getAssetPrefixFromPathname(pathname, "document.currentScript src");
+ }
+ 
+ //# sourceMappingURL=asset-prefix.js.map
+\ No newline at end of file

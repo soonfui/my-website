@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
 
-import ProductSlider from "./ProductSlider";
-import WorkSlider from "./WorkSlider";
-import Pricing from "./Pricing";
-import SeoCtaSection from "./SeoCardSection";
+import ProductSlider from "./compenents/ProductSlider";
+import WorkSlider from "./compenents/WorkSlider";
+import Pricing from "./compenents/Pricing";
+import SeoCtaSection from "./compenents/SeoCardSection";
 
 /** 靜態匯出時 next/image 與原生 img 不會自動加 basePath，需與 next.config 一致 */
 function publicAsset(path: string) {
